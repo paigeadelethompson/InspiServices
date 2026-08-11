@@ -1,0 +1,2 @@
+source ~/default.env
+source ~/config.env
