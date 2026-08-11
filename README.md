@@ -92,6 +92,35 @@ All commands are available to IRC operators via `/msg <Service> help`.
 
 The daemon creates a SQLite database (`anservices.db`) with tables for accounts, channels, bots, bans, and bridge mappings. See `src/services/schema.cpp` for the full DDL.
 
+## Theory of Operation
+
+### SID Partitioning Across Networks
+
+InspIRCd SIDs are 3 bytes: `NNA` (digit-digit-letter) or `NNN` (digit-digit-digit). The first byte (the most-significant nibble) identifies the **network number** (0–9 = 10 unique co-operating networks). The remaining two bytes identify servers within that network.
+
+- Network 0: `0NN`, `0NA` — partner A
+- Network 1: `1NN`, `1NA` — partner B
+- Network 2: `2NN`, `2NA` — partner C
+- ...
+- Network 9: `9NN`, `9NA` — partner H
+
+Each network owns a `/10` prefix of the SID space, giving it up to `360` servers (`10×10 + 10×26 = 100+260 = 360`).
+
+### Per-Row Network SID
+
+Every row in every table of the services database carries a **network SID column** — the SID of the hub server for the network that created that row. This enables multimaster replication: data from multiple networks coexists in the same database, tagged by origin.
+
+**Example:**
+- A user registered on network `01A` (network 0, server 1A) connects via a server on network `11A` (network 1, server 1A).
+- The user identifies to NickServ.
+- They register a channel `#example`.
+- The channel row stores `01A` as its network SID — it remains a `01A` asset even though the user connected through `11A`.
+- If network 1 later splits off, it deletes all rows tagged `1NN`/`1NA`, leaving `0NN`/`0NA` data intact.
+
+### Relation to Bridge SID Limit
+
+The bridge virtual server limit (~12,960 SIDs) is shared across all 10 networks. Each network consumes SIDs for its hub, services daemon, and any bridged guilds (Discord, Signal, etc.). The partitioning scheme ensures no two networks collide on SID space.
+
 ## Examples
 
 - `env/.env` – Template with all configurable variables
