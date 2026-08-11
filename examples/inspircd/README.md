@@ -677,33 +677,47 @@ inspircd -d -F
 Different IRC networks can share the same inspircd + inspiservices stack while maintaining ownership of their users and data. This is achieved through:
 
 - **Multimaster replication** across all services databases
-- Every table row includes a **SID column** indicating which network created it
-- If a network decides to leave the partnership, it deletes all rows tagged with its SIDs
+- Every table row includes a **NETWORK column** indicating which network created it
+- If a network decides to leave the partnership, it deletes all rows tagged with its NETWORK
 - Remaining networks keep their data intact
 
-This also ties back to the SID limit — each partner network consumes SIDs for its hub, services, and bridged virtual servers. The 12,960 ceiling is shared across all co-operating networks.
+This also ties back to the SID limit — each partner network consumes SIDs for its hub, services, and bridged virtual links. The 12,960 ceiling is shared across all co-operating networks.
 
 ## Bridge Virtual Link SID Limitation
 
-Each bridge (Discord, Signal, etc.) is a virtual server that appears as linked to services to the rest of the network. Each virtual server requires a unique SID (Server ID). SIDs are 3 bytes — the format is `nnn` or `nnA` where `n` is a decimal digit and `A` is an uppercase letter. This gives a total of 12,960 possible SIDs per server (`10 × 10 × 10 + 10 × 10 × 26 = 1000 + 2600 = 3600` per server, and with 3 servers per hub config that's `3600 × 3 = 10,800`, or up to `12,960` depending on allocation scheme).
+Each bridge (Discord, Signal, etc.) is a virtual link — each bridged entity (a Discord channel within a guild, a Signal group) appears as a separate LINK to services. Each virtual link requires a unique SID (Server ID). SIDs are 3 bytes — the format is `nnn` or `nnA` where `n` is a decimal digit and `A` is an uppercase letter. This gives a total of 12,960 possible SIDs per server (`10 × 10 × 10 + 10 × 10 × 26 = 1000 + 2600 = 3600` per server, and with 3 servers per hub config that's `3600 × 3 = 10,800`, or up to `12,960` depending on allocation scheme).
 
-**Practical limit: ~12,960 virtual links** across the hub/leaf set. If a single bridged service (Discord, Signal, etc.) needs to represent more bridged servers than available SIDs, the SID storage type must be expanded — which has downstream implications for `LINKS`/`MAP` processing (sendq/recvq queues, netsplit handling, burst sizing).
+**Practical limit: ~12,960 virtual links** across the hub/leaf set. If a bridged service needs more links than available SIDs, the SID storage type must be expanded — which has downstream implications for `LINKS`/`MAP` processing (sendq/recvq queues, netsplit handling, burst sizing).
 
 This is an **experimental** bridging model. The 12,960 limit is generous for most deployments but should be investigated before scaling beyond that threshold.
 
 ### Production Example
 
-A `/MAP` or `/LINKS` view would show:
+A `/MAP` view showing hub.netcrave.chat linked to two other networks, each with their own services and bridges:
 
 ```
-hub.netcrave.chat (hub)
-  └── services.netcrave.chat (services)
-        ├── 123456789.abcdef01.services.netcrave.chat  (Discord guild "My Server")
-        ├── 987654321.12345678.services.netcrave.chat  (Discord guild "Another Server")
-        └── signal.abcdef01.services.netcrave.chat     (Signal bridge)
+hub.netcrave.chat (01A InspIRCd-4.11.0-FreeBSD-4.11.0)
+  ├─services.netcrave.chat (01B unknown)
+  │   ├─foochat.123457.discord.netcrave.chat (01C)   (Discord #foochat in guild 123457)
+  │   ├─barfoo.43215.discord.netcrave.chat   (01D)   (Discord #barfoo in guild 43215)
+  │   └─foochat.12345.signal.netcrave.chat   (01E)   (Signal #foochat for user 12345)
+  │
+  ├─hub.supernets.org (11A InspIRCd-4.11.0-FreeBSD-4.11.0)
+  │   └─services.supernets.org (11B unknown)
+  │       ├─lobby.98765.discord.supernets.org (11C)  (Discord #lobby in guild 98765)
+  │       └─dev.12345.discord.supernets.org   (11D)  (Discord #dev in guild 12345)
+  │
+  └─hub.ircfiber.com (21A InspIRCd-4.11.0-FreeBSD-4.11.0)
+      └─services.ircfiber.com (21B unknown)
+          ├─general.54321.discord.ircfiber.com (21C) (Discord #general in guild 54321)
+          └─random.54321.discord.ircfiber.com   (21D) (Discord #random in guild 54321)
 ```
 
-Each virtual server under services gets a unique SID. The naming convention is `<bridge-type>.<guild-id>.services.netcrave.chat` — e.g. `discord.123456789.abcdef01.services.netcrave.chat`. The hub and services daemon each consume one SID; every bridged server consumes another.
+Naming conventions:
+- Discord: `<channel>.<guild>.discord.<network>`
+- Signal:  `<channel>.<userid>.signal.<network>`
+
+Each server gets a unique SID — hub `01A`, services `01B`, bridged links `01C`–`01E` within netcrave, and similarly `11A`–`11D` for supernets and `21A`–`21D` for ircfiber.
 
 ## SSL_PORT / STS_PORT
 

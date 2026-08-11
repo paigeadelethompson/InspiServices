@@ -1,2 +1,5 @@
 build/
 anservices.db
+anservices.db-shm
+anservices.db-wal
+
