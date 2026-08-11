@@ -175,11 +175,40 @@ There are 214 `setenv` variables across `default.env` and `config.env`. Key grou
 - **STS** – `STS_HOST`, `STS_PORT`, `STS_DURATION`
 - **Channel features** – `CHAN_HISTORY_*`, `BLOCK_HL_*`, `REPEAT_*`, `JOIN_FLOOD_*`
 
+## Directory Setup
+
+All config files live under `/home/irc/`. Deploy with:
+
+```sh
+cp -r examples/inspircd /home/irc/
+ln -s /home/irc /etc/inspircd          # Debian/Ubuntu
+# OR
+ln -s /home/irc /usr/local/etc/inspircd  # FreeBSD/manual
+chown -R irc:ircd /home/irc
+```
+
+For bash users, source the env files in `~/.bashrc` instead of `.tcshrc`:
+
+```bash
+source /home/irc/default.env
+source /home/irc/config.env
+```
+
+Troubleshoot with debug foreground mode:
+
+```sh
+inspircd -d -F
+```
+
+## SSL_PORT / STS_PORT
+
+`config.env` and `custom.conf` use `4443` for both ports. Change to `6697` for standard IRC TLS port if your environment allows it.
+
 ## Running
 
-1. Source the env (or use `--env` in newer InspIRCd builds):
+1. Source the environment:
    ```sh
-   source .tcshrc   # or manually: source default.env && source config.env
+   source /home/irc/default.env && source /home/irc/config.env
    ```
 2. Start InspIRCd:
    ```sh
