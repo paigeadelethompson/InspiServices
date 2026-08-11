@@ -23,103 +23,575 @@ This directory contains a complete InspIRCd configuration for a hub/leaf IRC net
 
 Configuration uses `setenv` in `.env` files, referenced in config tags as `&env.VARIABLE;`. The `.tcshrc` sources the env files, then `inspircd` is launched with `--env` or the environment is exported before running.
 
-### Sections in `inspircd.conf`
+## inspircd.conf Section-by-Section Explanation
 
-- **`<badip>`** – Block non-routable/reserved IP ranges (RFC 1918, APIPA, DoD, etc.)
-- **`<badnick>`** – Reserve service nicknames so users cannot register them
-- **`<cidr>`** – Clone detection CIDR limits
-- **`<class>`** – Oper classes: Shutdown, SACommands, ServerLink, BanControl, OperChat, HostCloak, RolePlay
-- **`<files>`** – MOTD and oper MOTD paths
-- **`<insane>`** – Insane detection thresholds
-- **`<limits>`** – Max lengths for away, chan, gecos, host, ident, kick, modes, nick, quit, topic
-- **`<options>`** – Core options (default modes, host-in-topic, ping warning, etc.)
-- **`<path>`** – Data/config/module/log directories
-- **`<performance>`** – Buffers, clone limits, quiet bursts
-- **`<pid>`** – PID file location
-- **`<security>`** – Flat links, generic oper, hide bans/splits/ulines, custom version
-- **`<type>`** – Oper types: NetAdmin, GlobalOp, Helper (with vhosts)
-- **`<whowas>`** – WHOWAS history limits
-- **`<maxmind>`** – GeoIP database path
-- **`<sts>`** – IRCv3 STS policy (preload, host, port)
-- **`<sasl>`** – SASL target server
-- **`<alias>`** – Command aliases (ID, NS, CS, OS, BS, HS, MS, SS, GLOBAL, NICKSERV, etc.)
-- **`<auditorium>`** – Auditorium mode settings
-- **`<autodrop>`** – Drop HTTP commands at the IRC level
-- **`<blockamsg>`** – Anti-mass-message protection
-- **`<blockhighlight>`** – Highlight blocking
-- **`<botmode>`** – Bot mode notice forwarding
-- **`<callerid>`** – CallerID (server-side ignore) settings
-- **`<cban>`** – Channel ban glob
-- **`<chanfilter>`** – Channel content filter
-- **`<chanhistory>`** – Channel history (H mode)
-- **`<chanlog>`** – Log channel snomask
-- **`<channames>`** – Allowed/denied channel name characters
-- **`<channels>`** – Channel count limits
-- **`<cloak>`** – Host cloaking (HMAC-SHA256-addr)
-- **`<connectban>`** – Connection hammering protection
-- **`<ctctags>`** – Client-only tag handling
-- **`<customprefix>`** – Custom prefixes: founder (~), admin (&), halfop (%), op, voice
-- **`<deaf>`** – Deaf mode bypass
-- **`<delaymsg>`** – Delay message (d mode)
-- **`<disabled>`** – Disabled commands/modes
-- **`<dnsbl>`** – DNSBL checks (DroneBL, EFnet RBL, tor exit nodes)
-- **`<exemptfromfilter>`** – Exempt service nicks from filters
-- **`<hidechans>` / `<hidelist>` / `<hidemode>`** – Hidden channel/list/mode settings
-- **`<hostname>`** – Hostname character map
-- **`<httpd>`** – HTTP server timeout
-- **`<inviteexception>`** – Invite exception bypass
-- **`<ircv3>`** – IRCv3 capabilities (account-notify, away-notify, extended-join)
-- **`<joinflood>`** – Join flood protection
-- **`<knock>`** – Knock notification
-- **`<messageflood>`** – Per-message flood thresholds
-- **`<monitor>`** – MONITOR max entries
-- **`<muteban>`** – Mute ban notifications
-- **`<nickdelay>`** – Nick delay after disconnect
-- **`<nickflood>`** – Nick flood duration
-- **`<noctcp>`** – CTCP blocking
-- **`<ojoin>`** – Oper join messages
-- **`<operlog>`** – Oper log snomask
-- **`<opermotd>`** – Oper MOTD
-- **`<operprefix>`** – Oper prefix
-- **`<override>`** – Oper override settings
-- **`<penalty>`** – Command penalties
-- **`<permchanneldb>`** – Permanent channel database
-- **`<remove>`** – Remove command protection rank
-- **`<repeat>`** – Repeat message blocking (E mode)
-- **`<rline>`** – Regex-based line banning
-- **`<rotatelog>`** – Log rotation period
-- **`<securelist>`** – Secure LIST for registered users
-- **`<showwhois>`** – WHOIS oper-only settings
-- **`<shun>`** – Shun settings
-- **`<silence>`** – SILENCE max entries
-- **`<sslinfo>` / `<sslmodes>`** – SSL info and modes
-- **`<stdregex>`** – Regex engine type
-- **`<svshold>`** – SVS hold settings
-- **`<timedbans>`** – Timed ban notifications
-- **`<uline>`** – U-line server declaration
-- **`<waitpong>`** – Wait-pong settings
-- **`<watch>`** – WATCH max
-- **`<wsorigin>`** – WebSocket origin allow
-- **`<xlinedb>`** – X-line database persistence
-- **`<zombie>`** – Zombie user cleanup
-- **`<help>`** – HELP command alias
+All `&env.VARIABLE;` references resolve from the sourced `.env` files (`default.env` + `config.env`).
 
-### Sections in `custom.conf`
+### `<include>` (lines 1–3)
 
-- **`<sslprofile>`** – TLS profile with CA, cert, key, DH params
-- **`<oper>`** – Admin oper block with password from env
-- **`<exception>`** – Exception lines for Tailscale, localhost, Tor ULA
-- **`<bind>`** – HAProxy hook, TLS clients (SSL), server link (SSL), plain clients, HTTP stats
-- **`<link>`** – LINK block to services daemon (AnswerServices)
-- **`<connect>`** – Connection classes: tor_haproxy_shim, tor, default, ssl, authenticated
-- **`<admin>`** – Admin contact
-- **`<server>`** – Server name, ID, network name
-- **`<operjoin>`** – Auto-join oper channel
-- **`<httpdacl>`** – HTTP ACL for stats page
-- **`<ident>`** – Ident service settings
-- **`<permchannels>`** – Permanent channel definitions (#oper, #services, #blackhole)
-- **`<exemptfromfilter>`** – Exempt oper and service channels from filters
-- **`<passforward>`** – Forward PASS to NickServ
+```inspircd
+<include file="/home/irc/modules.conf">
+<include file="/home/irc/help.conf">
+<include file="/home/irc/custom.conf">
+```
+
+Loads three external config files in order: `modules.conf` (module load list), `help.conf` (`/HELP` text), `custom.conf` (network-specific binds, TLS, link, connect classes, oper blocks).
+
+---
+
+### `<badip>` (lines 5–35)
+
+Blocks connection attempts from IP ranges that should never be used by real users: APIPA (169.254), RFC 1918 private ranges, CGNAT (100.64), TEST-NET, multicast, DoD-assigned ranges, loopback, IPv4-mapped/compat, 6-to-4, ORCHIDv2, ULA, link-local.
+
+---
+
+### `<badnick>` (lines 37–53)
+
+Reserves service nicknames so users cannot register them: ALIS, BOTSERV, CHANFIX, CHANSERV, GAMESERV, GLOBAL, GROUPSERV, HELPSERV, HOSTSERV, INFOSERV, MEMOSERV, NICKSERV, OPERSERV, PROXYSCAN, RPGSERV, SASLSERV, STATSERV.
+
+---
+
+### `<cidr>` (line 55)
+
+Sets the CIDR length for clone detection. Two connections from the same `/32` IPv4 or `/64` IPv6 range are considered clones.
+
+---
+
+### `<class>` (lines 57–95)
+
+Defines oper classes – permission groups assigned to oper types. Each class grants `commands`, `privs`, `snomasks`, `usermodes`, `chanmodes`.
+
+| Class | Commands | Purpose |
+|---|---|---|
+| **Shutdown** | DIE, RESTART, REHASH, module load/unload | Full server control, all privs |
+| **SACommands** | SAJOIN, SAPART, SANICK, SAQUIT, SATOPIC, SAKICK, SAMODE, OJOIN | Services-admin overrides |
+| **ServerLink** | CONNECT, SQUIT, RCONNECT, RSQUIT, MKPASSWD, ALLTIME, SWHOIS, LOCKSERV, UNLOCKSERV | Server linking |
+| **BanControl** | KILL, GLINE, KLINE, ZLINE, QLINE, ELINE, TLINE, RLINE, CHECK, NICKLOCK, NICKUNLOCK, SHUN, CLONES, CBAN | All ban types |
+| **OperChat** | WALLOPS, GLOBOPS | Broadcast to opers |
+| **HostCloak** | SETHOST, SETIDENT, SETIDLE, CHGNAME, CHGHOST, CHGIDENT | Change user metadata |
+| **RolePlay** | (no commands, only priv) | Grants `channels/roleplay` and `channels/roleplay-override` |
+
+---
+
+### `<files>` (line 97)
+
+MOTD and oper MOTD file paths (`/home/irc/motd.txt`, `/home/irc/oper.motd.txt`).
+
+---
+
+### `<insane>` (line 99)
+
+Insane detection thresholds. When a single host/IP/nick matches more than `trigger` percent of users, oper notification fires.
+
+---
+
+### `<limits>` (lines 101–110)
+
+Maximum lengths for away, chan, gecos, host, ident, kick, modes, nick, quit, topic. All from env vars.
+
+---
+
+### `<maxlist>` (line 112)
+
+Limits `/LIST` results per channel to prevent flood.
+
+---
+
+### `<options>` (lines 114–136)
+
+Core server options: default modes (`npsto`), host-in-topic, invite bypass, ping warning, prefix/suffix for part/quit, syntax hints, xline message, etc. All from env vars.
+
+---
+
+### `<path>` (lines 138–142)
+
+Directories for data, config, runtime (PID), modules (`/usr/local/libexec/inspircd/modules/`), and logs.
+
+---
+
+### `<performance>` (lines 144–149)
+
+Buffer sizes, clone-on-connect, quiet bursts, soft FD limit, listen backlog, time skip warning.
+
+---
+
+### `<pid>` (line 151)
+
+PID file path (`/tmp/inspircd.pid`).
+
+---
+
+### `<security>` (lines 153–164)
+
+Flat links, generic oper, hide bans/splits/ulines, custom version, max targets, restrict banned users, user stats visibility.
+
+---
+
+### `<type>` (lines 166–177)
+
+Oper types that users authenticate as via `/OPER`:
+
+| Type | Classes | Vhost |
+|---|---|---|
+| **NetAdmin** | SACommands + OperChat + BanControl + HostCloak + Shutdown + ServerLink | `admin/<network>` |
+| **GlobalOp** | SACommands + OperChat + BanControl + HostCloak + ServerLink | `oper/<network>` |
+| **Helper** | HostCloak only | `helper/<network>` |
+
+Helper gets no ban/server commands, only metadata change.
+
+---
+
+### `<whowas>` (line 179)
+
+WHOWAS history: group size, max groups, max keep time.
+
+---
+
+### `<maxmind>` (line 181)
+
+GeoIP database path (`/home/irc/GeoLite2-Country.mmdb`) for country-based user classification.
+
+---
+
+### `<sts>` (lines 183–186)
+
+IRCv3 Strict Transport Security – tells clients to only connect via TLS to `host:port` for the duration. Preload enabled for sharing in netbursts.
+
+---
+
+### `<sasl>` (lines 188–189)
+
+SASL target server and whether TLS is required.
+
+---
+
+### `<alias>` (lines 191–304, 587)
+
+Command aliases that transform user commands into `SQUERY` messages to services:
+
+| User Text | Sends To | Purpose |
+|---|---|---|
+| `/ID <nick> <pass>` | ChanServ :IDENTIFY | Channel password auth |
+| `/ID <nick> <pass>` | NickServ :IDENTIFY | Nick auth |
+| `/NICKSERV <msg>` | NickServ | Full NS command access |
+| `/CS <cmd>` | ChanServ | Channel command alias |
+| `/BOTSERV` / `BS` | BotServ | BotServ access |
+| `/CHANSERV` / `CS` | ChanServ | ChanServ access |
+| `/HOSTSERV` / `HS` | HostServ | HostServ access |
+| `/MEMOSERV` / `MS` | MemoServ | MemoServ access |
+| `/NICKSERV` / `NS` | NickServ | NickServ access |
+| `/OPERSERV` / `OS` | OperServ (oper-only) | OperServ access |
+| `/STATSERV` / `SS` | StatServ | StatServ access |
+| `/IDENTIFY <nick> <pass>` | NickServ | Explicit identify |
+| `/GLOBAL <msg>` | GLOBAL (oper-only) | Global notice broadcast |
+| `/HELPOP <topic>` | HELP | Help system |
+
+---
+
+### `<auditorium>` (lines 306–308)
+
+Controls +u mode: whether ops/opers see the full user list and whether ops are visible.
+
+---
+
+### `<autodrop>` (line 310)
+
+Silently drops HTTP commands (CONNECT, DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, TRACE) at the IRC level.
+
+---
+
+### `<blockamsg>` (lines 312–313)
+
+Anti-mass-message: after `delay` seconds of rapid multi-target messaging, `action` triggers (e.g. `killopers`).
+
+---
+
+### `<blockhighlight>` (lines 315–319)
+
+Blocks excessive highlighting: min message length, min users involved, strip color, ignore ext messages.
+
+---
+
+### `<botmode>` (line 321)
+
+Whether notices from +B (bot mode) users are forced through restrictions.
+
+---
+
+### `<callerid>` (lines 323–325)
+
+Server-side ignore (+g): cooldown, max accepts, track by nick.
+
+---
+
+### `<cban>` (line 327)
+
+Whether channel bans use glob matching.
+
+---
+
+### `<chanfilter>` (lines 329–331)
+
+Channel content filter (+g): hide mask, max pattern length, notify user.
+
+---
+
+### `<chanhistory>` (lines 333–336)
+
+Channel history (+H): bots receive history, opt-out via +N, max lines, prefix replay messages.
+
+---
+
+### `<chanlog>` (lines 338–339)
+
+Sends snomask notifications into the oper channel (`#oper`).
+
+---
+
+### `<channames>` (lines 341–342)
+
+Allowed/denied ASCII character ranges in channel names.
+
+---
+
+### `<channels>` (lines 344–345)
+
+Max channels visible in WHOIS for opers and users (`4294967295` = unlimited).
+
+---
+
+### `<cloak>` (lines 347–349)
+
+Host cloaking: `hmac-sha256-addr` method, secret key, suffix appended after hash. Used with +x mode.
+
+---
+
+### `<connectban>` (lines 351–357)
+
+Anti-connection-hammering: threshold per CIDR, ban duration, boot wait, split wait, CIDR lengths.
+
+---
+
+### `<ctctags>` (line 359)
+
+Whether client-only message tags are allowed.
+
+---
+
+### `<customprefix>` (lines 361–388)
+
+Custom channel prefixes beyond standard `ov`:
+
+| Prefix | Letter | Rank | Set by | Purpose |
+|---|---|---|---|---|
+| `~` founder | q | 50000 | Services only | Highest rank, cannot be kicked |
+| `&` admin | a | 40000 | Services only | Admin level |
+| `%` halfop | h | 20000 | +o can set | Limited op |
+| `@` op | o | 30000 | +o can set | Standard op |
+| `+` voice | v | 10000 | +o can set | Can speak in +m |
+
+---
+
+### `<deaf>` (lines 390–393)
+
+Deaf (+d) and privdeaf (+D): bypass characters, U-line bypass, enable private deaf.
+
+---
+
+### `<delaymsg>` (line 395)
+
+Whether notices bypass the +d (delay message) delay.
+
+---
+
+### `<disabled>` (lines 397–400)
+
+Disabled commands, channel modes, user modes network-wide. `fakenonexistant` makes them appear missing.
+
+---
+
+### `<dnsbl>` (lines 402–427)
+
+Three DNSBL checks on every connection:
+
+| Name | Domain | Records | Action |
+|---|---|---|---|
+| **DroneBL** | `dnsbl.dronebl.org` | 3,5,6,7,8,9,10,11,13,14,15,16,17,19 | Z-line 5m |
+| **EFnet RBL** | `rbl.efnetrbl.org` | 1,2,3,4,5 | Z-line 5m |
+| **tor exit** | `torexit.dan.me.uk` | 100 | Z-line 5m |
+
+---
+
+### `<exemptfromfilter>` (lines 429–461)
+
+Exempts all service nicknames (ALIS, BOTSERV, CHANSERV, etc.) from the content filter.
+
+---
+
+### `<hidechans>` (line 463)
+
+Whether +I (hide channels in WHOIS) affects opers too.
+
+---
+
+### `<hidelist>` (lines 465–469)
+
+Hides list modes from users below rank: filter (+g) hidden below op, invex (+I) visible to all.
+
+---
+
+### `<hidemode>` (lines 471–472)
+
+Hides ban entries from users below voice rank (10000).
+
+---
+
+### `<hostname>` (line 474)
+
+Character map for hostnames sent to clients (alphanumeric + `.-_/`).
+
+---
+
+### `<httpd>` (line 476)
+
+HTTP daemon timeout for stats pages.
+
+---
+
+### `<inviteexception>` (line 478)
+
+Whether invite exceptions (+I) bypass the channel key (+k).
+
+---
+
+### `<ircv3>` (lines 480–482)
+
+IRCV3 capabilities: account-notify, away-notify, extended-join.
+
+---
+
+### `<joinflood>` (lines 484–486)
+
+Anti-join-flood: boot wait, duration, split wait (used by +j mode).
+
+---
+
+### `<knock>` (line 488)
+
+Who receives `/KNOCK` notifications (`both` = target user + channel ops).
+
+---
+
+### `<messageflood>` (lines 490–492)
+
+Per-second flood limits for notice, privmsg, tagmsg (used by +f mode).
+
+---
+
+### `<monitor>` (line 494)
+
+Max monitored nicknames per user.
+
+---
+
+### `<muteban>` (line 496)
+
+Whether users are notified when +m (muteban) blocks their message.
+
+---
+
+### `<nickdelay>` (lines 498–499)
+
+Prevents reclaiming a disconnected nick for `delay` seconds. `hint` tells the user.
+
+---
+
+### `<nickflood>` (line 501)
+
+Nick flood detection duration (used by +F mode).
+
+---
+
+### `<noctcp>` (line 503)
+
+Whether users can set +C (block CTCP) as a user mode.
+
+---
+
+### `<ojoin>` (lines 505–507)
+
+Oper join: notice sent to channel, auto-op, message prefix.
+
+---
+
+### `<operlog>` (line 509)
+
+Maps oper commands to snomask notifications (`on` = oper actions logged).
+
+---
+
+### `<opermotd>` (lines 511–512)
+
+Shows oper MOTD after successful `/OPER`.
+
+---
+
+### `<operprefix>` (line 514)
+
+Prefix added to oper nick in messages (e.g. `*`).
+
+---
+
+### `<override>` (lines 516–518)
+
+Oper override (+O): enable, noisy announcements, require channel key.
+
+---
+
+### `<penalty>` (lines 520–521)
+
+Command penalty in milliseconds (`HELPOP` costs 60ms).
+
+---
+
+### `<permchanneldb>` (lines 523–525)
+
+Persists permanent channel (+P) modes, bans, topics to a SQLite DB.
+
+---
+
+### `<remove>` (lines 527–528)
+
+`/REMOVE`: protected rank (founder), support nokicks.
+
+---
+
+### `<repeat>` (lines 530–534)
+
+Repeat message blocking (+E): backlog, distance, lines, time window, size.
+
+---
+
+### `<rline>` (lines 536–538)
+
+Regex banning: engine (`pcre`), match on nick change, zline on match.
+
+---
+
+### `<rotatelog>` (line 540)
+
+Log rotation period (`86400` = daily).
+
+---
+
+### `<securelist>` (lines 542–544)
+
+`/LIST` requires a wait period; registered users are exempt.
+
+---
+
+### `<showwhois>` (lines 546–547)
+
+WHOIS notifications (+W): oper-only, show from opers.
+
+---
+
+### `<shun>` (lines 549–554)
+
+Shun (restricted mode): affect opers, allow connect, allow tags, cleaned commands, enabled commands (AWAY, OPER, PING, etc.), notify user.
+
+---
+
+### `<silence>` (lines 556–557)
+
+SILENCE: exempt U-lines, max entries.
+
+---
+
+### `<sslinfo>` (line 559)
+
+Whether `/SSLINFO` is oper-only.
+
+---
+
+### `<sslmodes>` (line 561)
+
+Whether users can set +z (TLS-only PMs).
+
+---
+
+### `<stdregex>` (line 563)
+
+Regex engine type (`ecmascript`).
+
+---
+
+### `<svshold>` (line 565)
+
+Whether SVS hold (nick locking by services) is silent.
+
+---
+
+### `<timedbans>` (line 567)
+
+Notify user when timed ban expires.
+
+---
+
+### `<uline>` (lines 569–570)
+
+Declares the services server as a U-line. U-lines are exempt from many restrictions.
+
+---
+
+### `<waitpong>` (lines 572–573)
+
+Kill on bad PONG reply, send notice on wait-pong events.
+
+---
+
+### `<watch>` (line 575)
+
+Max watched nicknames per user.
+
+---
+
+### `<wsorigin>` (line 577)
+
+Allowed WebSocket origins.
+
+---
+
+### `<xlinedb>` (lines 579–580)
+
+Persists X-lines to SQLite every `saveperiod` seconds.
+
+---
+
+### `<zombie>` (lines 582–585)
+
+Zombie user cleanup after splits: clean split, dirty split, max zombies, server zombie time.
+
+---
+
+## custom.conf Sections
+
+| Tag | Purpose |
+|---|---|
+| **`<sslprofile>`** | TLS profile with CA, cert, key, DH params |
+| **`<oper>`** | Admin oper block with password from env |
+| **`<exception>`** | Exception lines for Tailscale, localhost, Tor ULA |
+| **`<bind>`** | HAProxy hook, TLS clients (SSL), server link (SSL), plain clients, HTTP stats |
+| **`<link>`** | LINK block to services daemon (AnswerServices) |
+| **`<connect>`** | Connection classes: tor_haproxy_shim, tor, default, ssl, authenticated |
+| **`<admin>`** | Admin contact |
+| **`<server>`** | Server name, ID, network name |
+| **`<operjoin>`** | Auto-join oper channel |
+| **`<httpdacl>`** | HTTP ACL for stats page |
+| **`<ident>`** | Ident service settings |
+| **`<permchannels>`** | Permanent channel definitions (#oper, #services, #blackhole) |
+| **`<exemptfromfilter>`** | Exempt oper and service channels from filters |
+| **`<passforward>`** | Forward PASS to NickServ |
 
 ## TLS Certificate Generation
 
