@@ -672,6 +672,39 @@ Troubleshoot with debug foreground mode:
 inspircd -d -F
 ```
 
+## inspiservices Multi-Network Database Design
+
+Different IRC networks can share the same inspircd + inspiservices stack while maintaining ownership of their users and data. This is achieved through:
+
+- **Multimaster replication** across all services databases
+- Every table row includes a **SID column** indicating which network created it
+- If a network decides to leave the partnership, it deletes all rows tagged with its SIDs
+- Remaining networks keep their data intact
+
+This also ties back to the SID limit — each partner network consumes SIDs for its hub, services, and bridged virtual servers. The 12,960 ceiling is shared across all co-operating networks.
+
+## Bridge Virtual Link SID Limitation
+
+Each bridge (Discord, Signal, etc.) is a virtual server that appears as linked to services to the rest of the network. Each virtual server requires a unique SID (Server ID). SIDs are 3 bytes — the format is `nnn` or `nnA` where `n` is a decimal digit and `A` is an uppercase letter. This gives a total of 12,960 possible SIDs per server (`10 × 10 × 10 + 10 × 10 × 26 = 1000 + 2600 = 3600` per server, and with 3 servers per hub config that's `3600 × 3 = 10,800`, or up to `12,960` depending on allocation scheme).
+
+**Practical limit: ~12,960 virtual links** across the hub/leaf set. If a single bridged service (Discord, Signal, etc.) needs to represent more bridged servers than available SIDs, the SID storage type must be expanded — which has downstream implications for `LINKS`/`MAP` processing (sendq/recvq queues, netsplit handling, burst sizing).
+
+This is an **experimental** bridging model. The 12,960 limit is generous for most deployments but should be investigated before scaling beyond that threshold.
+
+### Production Example
+
+A `/MAP` or `/LINKS` view would show:
+
+```
+hub.netcrave.chat (hub)
+  └── services.netcrave.chat (services)
+        ├── 123456789.abcdef01.services.netcrave.chat  (Discord guild "My Server")
+        ├── 987654321.12345678.services.netcrave.chat  (Discord guild "Another Server")
+        └── signal.abcdef01.services.netcrave.chat     (Signal bridge)
+```
+
+Each virtual server under services gets a unique SID. The naming convention is `<bridge-type>.<guild-id>.services.netcrave.chat` — e.g. `discord.123456789.abcdef01.services.netcrave.chat`. The hub and services daemon each consume one SID; every bridged server consumes another.
+
 ## SSL_PORT / STS_PORT
 
 `config.env` and `custom.conf` use `4443` for both ports. Change to `6697` for standard IRC TLS port if your environment allows it.
