@@ -1,4 +1,4 @@
-// AnswerServices - a single link to an InspIRCd spanning-tree server.
+// InspiServices - a single link to an InspIRCd spanning-tree server.
 //
 // Handles one server-to-server connection (either an outbound link we've
 // dialled to an InspIRCd hub, or a connection accepted from a bridge). The

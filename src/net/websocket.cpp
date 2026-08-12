@@ -77,7 +77,7 @@ namespace svc::net {
     request += "Connection: Upgrade\r\n";
     request += "Sec-WebSocket-Key: " + key + "\r\n";
     request += "Sec-WebSocket-Version: 13\r\n";
-    request += "User-Agent: AnswerServices/0.1\r\n";
+    request += "User-Agent: InspiServices/0.1\r\n";
     for (auto const &[k, v] : extra_headers)
       request += k + ": " + v + "\r\n";
     request += "\r\n";

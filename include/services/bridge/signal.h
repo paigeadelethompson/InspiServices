@@ -1,4 +1,4 @@
-// AnswerServices - native Signal bridge.
+// InspiServices - native Signal bridge.
 //
 // Speaks signal-cli's JSON-RPC 2.0 over a TCP socket (`signal-cli daemon
 // --tcp <port>`, newline-delimited JSON-RPC). The account number and the

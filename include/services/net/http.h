@@ -1,4 +1,4 @@
-// AnswerServices - minimal asynchronous HTTP/1.1 client.
+// InspiServices - minimal asynchronous HTTP/1.1 client.
 //
 // Used for the Discord REST API and optional signal-cli HTTP mode. Supports
 // GET/POST/PATCH/DELETE, content-length and chunked responses.

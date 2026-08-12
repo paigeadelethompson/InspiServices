@@ -1,4 +1,4 @@
-// AnswerServices - SQLite data store.
+// InspiServices - SQLite data store.
 //
 // Everything (services config, nickserv/chanserv/botserv/operserv data, bridge
 // routing) lives here. The only things *not* stored are link send/receive

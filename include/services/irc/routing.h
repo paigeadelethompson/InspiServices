@@ -1,4 +1,4 @@
-// AnswerServices - hub / router.
+// InspiServices - hub / router.
 //
 // Owns every active link (a server connection), maintains the network model,
 // and decides which messages to forward to which links. The services core and

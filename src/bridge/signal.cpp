@@ -1,4 +1,4 @@
-// AnswerServices - native Signal bridge (JSON-RPC over TCP to signal-cli).
+// InspiServices - native Signal bridge (JSON-RPC over TCP to signal-cli).
 #include "services/bridge/signal.h"
 
 #include <chrono>

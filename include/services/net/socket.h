@@ -1,4 +1,4 @@
-// AnswerServices - TCP socket layer.
+// InspiServices - TCP socket layer.
 //
 // Non-blocking sockets driven on non-blocking Reactor. Building blocks:
 //   * TcpListener    - passive accept loop.

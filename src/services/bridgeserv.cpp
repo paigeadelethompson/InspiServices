@@ -1,4 +1,4 @@
-// AnswerServices - BridgeServ: manage bridge (remote community / platform)
+// InspiServices - BridgeServ: manage bridge (remote community / platform)
 // links.
 //
 // Bridges come in two flavours:

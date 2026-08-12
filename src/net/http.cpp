@@ -51,7 +51,7 @@ namespace svc::net {
       out += u.path;
       out += " HTTP/1.1\r\n";
       out += "Host: " + u.host + "\r\n";
-      out += "User-Agent: AnswerServices/0.1\r\n";
+      out += "User-Agent: InspiServices/0.1\r\n";
       out += "Accept: */*\r\n";
       bool has_ct = false;
       bool has_cl = false;

@@ -1,4 +1,4 @@
-// AnswerServices - native Discord bridge implementation.
+// InspiServices - native Discord bridge implementation.
 #include "services/bridge/discord.h"
 
 #include <chrono>
@@ -161,8 +161,8 @@ namespace svc::bridge {
 
     Json::Value properties(Json::objectValue);
     properties["$os"] = "linux";
-    properties["$browser"] = "AnswerServices";
-    properties["$device"] = "AnswerServices";
+    properties["$browser"] = "InspiServices";
+    properties["$device"] = "InspiServices";
 
     Json::Value d(Json::objectValue);
     d["token"] = token_;

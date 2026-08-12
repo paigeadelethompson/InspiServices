@@ -1,4 +1,4 @@
-// AnswerServices - native Discord bridge.
+// InspiServices - native Discord bridge.
 //
 // Connects to the Discord REST API and Gateway over a WebSocket, authenticates
 // as a bot, and relays messages between Discord channels and IRC channels using

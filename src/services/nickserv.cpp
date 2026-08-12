@@ -1,4 +1,4 @@
-// AnswerServices - NickServ: nickname registration and identification.
+// InspiServices - NickServ: nickname registration and identification.
 #include "services/irc/protocol.h"
 #include "services/services/core.h"
 #include "services/services/modules.h"

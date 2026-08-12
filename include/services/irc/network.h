@@ -1,4 +1,4 @@
-// AnswerServices — in-memory IRC network model.
+// InspiServices — in-memory IRC network model.
 //
 // The services core keeps a soft view of the network state so it can resolve
 // nicknames to accounts, look up channel members, and feed the services.

@@ -1,4 +1,4 @@
-// AnswerServices - environment / .env handling and secrets.
+// InspiServices - environment / .env handling and secrets.
 //
 // Secrets (link send/receive passwords, bot tokens) are never stored in the
 // database. They are read from (in priority order):

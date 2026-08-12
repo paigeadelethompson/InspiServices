@@ -1,4 +1,4 @@
-// AnswerServices - single threaded event loop built on poll(2).
+// InspiServices - single threaded event loop built on poll(2).
 //
 // The services and bridge processes are single threaded; all sockets registered
 // here are non-blocking. Timers are monotonic based. call_later() defers work

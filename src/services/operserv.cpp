@@ -1,4 +1,4 @@
-// AnswerServices - OperServ: operator administration.
+// InspiServices - OperServ: operator administration.
 //
 // Authorisation model: a command requires a *privilege*. Real IRC operators
 // always have the full "admin" privilege; other users get privileges by being
@@ -311,7 +311,7 @@ namespace svc::core {
       std::int64_t cu = chans.empty() ? 0 : chans[0].as_int("n");
       std::int64_t uu = users.empty() ? 0 : users[0].as_int("n");
       std::int64_t gu = grps.empty() ? 0 : grps[0].as_int("n");
-      c.notice(m, "AnswerServices status:");
+      c.notice(m, "InspiServices status:");
       c.notice(m, "  registered nicks:   " + std::to_string(nu));
       c.notice(m, "  registered chans:   " + std::to_string(cu));
       c.notice(m, "  access list rows:   " + std::to_string(uu));

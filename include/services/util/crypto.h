@@ -1,4 +1,4 @@
-// AnswerServices - cryptography helpers (OpenSSL backend).
+// InspiServices - cryptography helpers (OpenSSL backend).
 #pragma once
 
 #include <cstdint>

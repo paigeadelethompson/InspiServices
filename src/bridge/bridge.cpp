@@ -1,4 +1,4 @@
-// AnswerServices - bridge (remote community / platform) link manager.
+// InspiServices - bridge (remote community / platform) link manager.
 #include "services/bridge/bridge.h"
 
 #include <algorithm>
@@ -320,7 +320,7 @@ namespace svc::bridge {
 
     virtual_server vs;
     vs.sid = sid;
-    vs.name = std::string(bridge_name) + ".anservices.net";
+    vs.name = std::string(bridge_name) + ".inspiservices.net";
     vs.desc = "Bridge virtual server";
     vs.uid_counter = 1;
 

@@ -1,4 +1,4 @@
-// AnswerServices - general utilities.
+// InspiServices - general utilities.
 #pragma once
 
 #include <algorithm>

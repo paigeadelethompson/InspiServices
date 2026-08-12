@@ -1,4 +1,4 @@
-// AnswerServices - InspIRCd spanning tree wire protocol.
+// InspiServices - InspIRCd spanning tree wire protocol.
 //
 // Implements the message format used by the current InspIRCd protocol
 // (PROTO_NEWEST = 1206): @tags <prefix> <COMMAND> <params...> :trailing.

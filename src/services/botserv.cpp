@@ -1,4 +1,4 @@
-// AnswerServices - BotServ: channel bots with in-channel (fantasy) commands.
+// InspiServices - BotServ: channel bots with in-channel (fantasy) commands.
 //
 // A bot is a pseudo-user owned by this daemon. Once assigned to a registered
 // channel (ASSIGN <#chan> <bot>) it joins that channel and answers fantasy

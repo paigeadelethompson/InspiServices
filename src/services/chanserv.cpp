@@ -1,4 +1,4 @@
-// AnswerServices - ChanServ: channel registration, operator status helpers,
+// InspiServices - ChanServ: channel registration, operator status helpers,
 // AKICK enforcement, and per-user access.
 #include "services/irc/protocol.h"
 #include "services/services/core.h"

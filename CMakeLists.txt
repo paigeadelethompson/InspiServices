@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(AnswerServices
+project(InspiServices
   VERSION 0.1.0
-  DESCRIPTION "AnswerServices (InspIRCd services & bridging)"
+  DESCRIPTION "InspiServices (InspIRCd services & bridging)"
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 26)
@@ -38,7 +38,7 @@ set(JSONCPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 # ---------------------------------------------------------------------------
 # The one daemon.
 # ---------------------------------------------------------------------------
-add_executable(anservices
+add_executable(inspiservices
   src/main.cpp
   src/util/util.cpp
   src/util/env.cpp
@@ -68,13 +68,13 @@ add_executable(anservices
   src/bridge/signal.cpp
 )
 
-target_include_directories(anservices PRIVATE
+target_include_directories(inspiservices PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${JSONCPP_DIR})
 
-target_sources(anservices PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jsoncpp.cpp)
+target_sources(inspiservices PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jsoncpp.cpp)
 
-target_link_libraries(anservices
+target_link_libraries(inspiservices
   PRIVATE
     Threads::Threads
     OpenSSL::SSL OpenSSL::Crypto
@@ -83,7 +83,7 @@ target_link_libraries(anservices
 # ---------------------------------------------------------------------------
 # Install
 # ---------------------------------------------------------------------------
-install(TARGETS anservices
+install(TARGETS inspiservices
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(FILES conf/environment.env.example

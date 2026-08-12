@@ -1,4 +1,4 @@
-// AnswerServices - the one daemon: InspIRCd services + bridge links.
+// InspiServices - the one daemon: InspIRCd services + bridge links.
 #include <csignal>
 #include <cstdlib>
 #include <string>
@@ -26,14 +26,14 @@ namespace {
     }
   }
 
-  std::string db_path = "anservices.db";
+  std::string db_path = "inspiservices.db";
   std::string env_file;
 
   void parse_args(int argc, char **argv) {
     for (int i = 1; i < argc; ++i) {
       std::string arg(argv[i]);
       if (arg == "-h" || arg == "--help") {
-        std::printf("Usage: anservices [--db path] [--env path]\n");
+        std::printf("Usage: inspiservices [--db path] [--env path]\n");
         std::exit(0);
       }
       if ((arg == "--db" || arg == "-d") && i + 1 < argc)

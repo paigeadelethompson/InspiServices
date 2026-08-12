@@ -1,4 +1,4 @@
-// AnswerServices - TLS support (OpenSSL).
+// InspiServices - TLS support (OpenSSL).
 #pragma once
 
 #include <memory>

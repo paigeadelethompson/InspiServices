@@ -582,7 +582,7 @@ Zombie user cleanup after splits: clean split, dirty split, max zombies, server 
 | **`<oper>`** | Admin oper block with password from env |
 | **`<exception>`** | Exception lines for Tailscale, localhost, Tor ULA |
 | **`<bind>`** | HAProxy hook, TLS clients (SSL), server link (SSL), plain clients, HTTP stats |
-| **`<link>`** | LINK block to services daemon (AnswerServices) |
+| **`<link>`** | LINK block to services daemon (InspiServices) |
 | **`<connect>`** | Connection classes: tor_haproxy_shim, tor, default, ssl, authenticated |
 | **`<admin>`** | Admin contact |
 | **`<server>`** | Server name, ID, network name |
@@ -734,4 +734,4 @@ Each server gets a unique SID — hub `01A`, services `01B`, bridged links `01C`
    inspircd --configdir /home/irc
    ```
 3. The daemon reads `inspircd.conf` → includes `modules.conf`, `help.conf`, `custom.conf`.
-4. Services (AnswerServices) connect via the `<link>` block in `custom.conf`.
+4. Services (InspiServices) connect via the `<link>` block in `custom.conf`.

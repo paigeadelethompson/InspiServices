@@ -1,4 +1,4 @@
-// AnswerServices - central daemon context.
+// InspiServices - central daemon context.
 #include "services/services/core.h"
 
 #include <algorithm>

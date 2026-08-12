@@ -1,4 +1,4 @@
-// AnswerServices - RFC 6455 WebSocket client.
+// InspiServices - RFC 6455 WebSocket client.
 //
 // Used for the Discord gateway (wss://) and for signal-cli daemons configured
 // to listen on a WebSocket rather than a UNIX socket/TCP socket.

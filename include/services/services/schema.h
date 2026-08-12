@@ -1,4 +1,4 @@
-// AnswerServices - database schema initialisation.
+// InspiServices - database schema initialisation.
 #pragma once
 
 #include "services/db.h"

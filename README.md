@@ -1,4 +1,4 @@
-# AnswerServices
+# InspiServices
 
 A modular IRC services daemon for InspIRCd, providing NickServ, ChanServ, BotServ, OperServ, and BridgeServ (Discord, Signal, InspIRCd LINK). Written in C++.
 
@@ -9,7 +9,7 @@ cmake -S . -B build
 cmake --build -j$(nproc) build
 ```
 
-Output binary: `build/anservices`
+Output binary: `build/inspiservices`
 
 ## Dependencies
 
@@ -33,7 +33,7 @@ apt install cmake build-essential libssl-dev libsqlite3-dev
    ```
 2. Run the daemon:
    ```sh
-   build/anservices --env env/myenv
+   build/inspiservices --env env/myenv
    ```
 3. Link InspIRCd to the services port (see `examples/inspircd/custom.conf`).
 
@@ -46,7 +46,7 @@ All configuration is done via environment variables (see `env/.env`). Key variab
 | `SERVICES_HOST` / `SERVICES_PORT` | Bind address for server link |
 | `SERVER_NAME` | U-line server name sent to IRCd |
 | `LINK_RECV_PASSWORD` / `LINK_SEND_PASSWORD` | Link passwords |
-| `DB_PATH` | SQLite database path (default `anservices.db`) |
+| `DB_PATH` | SQLite database path (default `inspiservices.db`) |
 | `BRIDGE_DISCORD_TOKEN` | Discord bot token |
 | `BRIDGE_SIGNAL_PATH` | Signal CLI socket path |
 
@@ -90,7 +90,7 @@ All commands are available to IRC operators via `/msg <Service> help`.
 
 ## Database Schema
 
-The daemon creates a SQLite database (`anservices.db`) with tables for accounts, channels, bots, bans, and bridge mappings. See `src/services/schema.cpp` for the full DDL.
+The daemon creates a SQLite database (`inspiservices.db`) with tables for accounts, channels, bots, bans, and bridge mappings. See `src/services/schema.cpp` for the full DDL.
 
 ## Theory of Operation
 

@@ -1,4 +1,4 @@
-// AnswerServices - database schema (created on first run).
+// InspiServices - database schema (created on first run).
 #include "services/db.h"
 
 namespace svc {

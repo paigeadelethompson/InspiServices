@@ -1,4 +1,4 @@
-// AnswerServices - configuration access.
+// InspiServices - configuration access.
 //
 // All runtime configuration lives in the `config` table (key -> value). Values
 // may be overwritten at runtime by opers (e.g. +aservices set). Secrets

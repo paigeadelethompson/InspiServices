@@ -1,4 +1,4 @@
-// AnswerServices - command text utilities shared by all services.
+// InspiServices - command text utilities shared by all services.
 #include "services/services/syntax.h"
 
 #include <cctype>

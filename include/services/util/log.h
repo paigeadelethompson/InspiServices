@@ -1,4 +1,4 @@
-// AnswerServices - small logging facility.
+// InspiServices - small logging facility.
 //
 // Log level and verbose flags live in the database (config table), because the
 // project deliberately ships without configuration files. Startup order still

@@ -1,4 +1,4 @@
-// AnswerServices - bridge (remote community) management.
+// InspiServices - bridge (remote community) management.
 //
 // A bridge connects a platform (Discord guild, Signal account/group) to the
 // IRC network via a virtual server node in the spanning tree. Each platform
@@ -56,7 +56,7 @@ namespace svc::bridge {
   // A virtual server node in the spanning tree.
   struct virtual_server {
     std::string sid;  // 3-char SID, e.g. "8G01"
-    std::string name; // e.g. "discord-main.anservices.net"
+    std::string name; // e.g. "discord-main.inspiservices.net"
     std::string desc; // e.g. "Discord guild bridge"
     std::map<std::string, virtual_user> users; // uid -> user
     unsigned uid_counter = 1;                  // for allocating UIDs

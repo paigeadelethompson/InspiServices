@@ -1,5 +1,7 @@
 build/
+inspiservices.db
+inspiservices.db-shm
+inspiservices.db-wal
 anservices.db
 anservices.db-shm
 anservices.db-wal
-
