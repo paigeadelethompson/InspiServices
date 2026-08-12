@@ -50,7 +50,7 @@ namespace svc::bridge {
         on_state(false);
       schedule_reconnect();
     };
-    ws_.on_error = [this](std::string const &msg) {
+    ws_.on_error = [](std::string const &msg) {
       svc::log::warn("discord", "connection error: {}", msg);
     };
   }

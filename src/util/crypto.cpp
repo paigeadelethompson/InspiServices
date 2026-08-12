@@ -15,7 +15,8 @@ namespace svc::crypto {
       static constexpr char const *hexchars = "0123456789abcdef";
       std::string out;
       out.reserve(bytes.size() * 2);
-      for (unsigned char const c : bytes) {
+      for (char const ch : bytes) {
+        unsigned char const c = static_cast<unsigned char>(ch);
         out.push_back(hexchars[c >> 4]);
         out.push_back(hexchars[c & 0x0F]);
       }
@@ -120,8 +121,10 @@ namespace svc::crypto {
     std::string bytes = random_bytes(len);
     std::string out;
     out.reserve(len);
-    for (unsigned char const c : bytes)
+    for (char const ch : bytes) {
+      unsigned char const c = static_cast<unsigned char>(ch);
       out.push_back(charset[c % charset.size()]);
+    }
     return out;
   }
 

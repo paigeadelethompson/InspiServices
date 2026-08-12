@@ -112,7 +112,7 @@ license you like.
  */
 
 namespace Json {
-static inline char getDecimalPoint() {
+[[maybe_unused]] static inline char getDecimalPoint() {
 #ifdef JSONCPP_NO_LOCALE_SUPPORT
   return '\0';
 #else

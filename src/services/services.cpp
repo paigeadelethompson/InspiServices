@@ -120,11 +120,11 @@ namespace svc::core {
     if (it == h.end()) {
       // Cross-service help: "HELP CHANSERV" on OperServ shows ChanServ's
       // command list and points the user at the right service.
-      for (auto const &svc : services_) {
-        if (!sv::irc_equals(sub, svc->name))
+      for (auto const &s : services_) {
+        if (!sv::irc_equals(sub, s->name))
           continue;
-        auto const other = help_.find(sv::irc_lower(svc->name));
-        emit(svc->name + " commands (use /msg " + svc->name +
+        auto const other = help_.find(sv::irc_lower(s->name));
+        emit(s->name + " commands (use /msg " + s->name +
              " HELP <command> for syntax):");
         if (other != help_.end()) {
           for (auto const &[subject, text] : other->second) {

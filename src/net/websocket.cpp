@@ -147,7 +147,7 @@ namespace svc::net {
         if (recv_buffer_.size() < 10)
           return;
         len = 0;
-        for (int i = 0; i < 8; ++i)
+        for (std::size_t i = 0; i < 8; ++i)
           len = (len << 8) | static_cast<unsigned char>(recv_buffer_[2 + i]);
         header = 10;
       }
