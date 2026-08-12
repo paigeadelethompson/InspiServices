@@ -264,8 +264,8 @@ namespace svc::net {
       }
       if (n == 0 || (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK &&
                      errno != EINTR)) {
-        error_ = (n == 0) ? "peer shut down write side (EOF)"
-                          : std::strerror(errno);
+        error_ =
+            (n == 0) ? "peer shut down write side (EOF)" : std::strerror(errno);
         handle_close();
         return;
       }
@@ -379,8 +379,7 @@ namespace svc::net {
       }
     } else if (n == 0 || (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK &&
                           errno != EINTR)) {
-      error_ = (n == 0) ? "peer closed connection (FIN)"
-                        : std::strerror(errno);
+      error_ = (n == 0) ? "peer closed connection (FIN)" : std::strerror(errno);
       handle_close();
     }
   }

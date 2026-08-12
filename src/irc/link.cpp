@@ -18,8 +18,8 @@ namespace svc::irc {
       // AUTH:<base64(hmac_sha256(pass, challenge))>
       // InspIRCd's Base64::Encode drops trailing '=' padding, so we must too or
       // the link is rejected as a password mismatch.
-      std::string b64 = svc::crypto::base64_encode(
-          svc::crypto::hmac_sha256(pass, challenge));
+      std::string b64 =
+          svc::crypto::base64_encode(svc::crypto::hmac_sha256(pass, challenge));
       while (!b64.empty() && b64.back() == '=')
         b64.pop_back();
       return "AUTH:" + b64;
@@ -59,8 +59,7 @@ namespace svc::irc {
       bool const dropped = (state_ != link_state::dying);
       if (dropped) {
         std::string const err = stream_.error();
-        svc::log::warn("irc",
-                       "link transport closed unexpectedly ({}:{}): {}",
+        svc::log::warn("irc", "link transport closed unexpectedly ({}:{}): {}",
                        cfg_.host, cfg_.port,
                        err.empty() ? "peer closed (FIN)" : err);
         stream_.close(); // reclaim the fd
@@ -263,8 +262,8 @@ namespace svc::irc {
     std::string const token =
         remote_sid_.empty() ? msg.param_or(0) : remote_sid_;
     if (msg.params.size() > 1)
-      send_line(sv::fmt(":{} PONG {} {}", cfg_.server_sid, token,
-                        msg.params[1]));
+      send_line(
+          sv::fmt(":{} PONG {} {}", cfg_.server_sid, token, msg.params[1]));
     else
       send_line(sv::fmt(":{} PONG {}", cfg_.server_sid, token));
   }

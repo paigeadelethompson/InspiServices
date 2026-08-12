@@ -107,7 +107,8 @@ namespace svc::bridge {
     // BridgeServ DISCORD command); it is never read from the environment.
     std::string const token = b.token_env;
     if (token.empty()) {
-      log::warn("bridge", "discord bridge '{}': no bot token configured", b.name);
+      log::warn("bridge", "discord bridge '{}': no bot token configured",
+                b.name);
       return;
     }
     std::string host =

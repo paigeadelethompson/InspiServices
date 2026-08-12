@@ -26,10 +26,10 @@ namespace svc::irc {
     std::string recv_pass; // password we expect
     std::string host;      // outbound connect target (tcp:port)
     std::string port;
-    bool send_tls = false; // TLS on this link
-    bool accept = false;   // inbound (adopted socket)
+    bool send_tls = false;  // TLS on this link
+    bool accept = false;    // inbound (adopted socket)
     bool reconnect = false; // auto-reconnect the outbound link when it drops
-    std::chrono::milliseconds retry_min{5000};  // initial backoff delay
+    std::chrono::milliseconds retry_min{5000};   // initial backoff delay
     std::chrono::milliseconds retry_max{300000}; // backoff cap
   };
 

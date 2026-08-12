@@ -37,14 +37,14 @@ namespace svc::core {
     }
 
     bool auto_approve_state(ctx &c, std::string_view scope = "NICK") {
-      std::string const key = scope == "CHAN" ? "auto_approve_chan"
-                                              : "auto_approve";
+      std::string const key =
+          scope == "CHAN" ? "auto_approve_chan" : "auto_approve";
       return global_get(c, key) == "1";
     }
 
     void set_auto_approve(ctx &c, bool on, std::string_view scope = "NICK") {
-      std::string const key = scope == "CHAN" ? "auto_approve_chan"
-                                              : "auto_approve";
+      std::string const key =
+          scope == "CHAN" ? "auto_approve_chan" : "auto_approve";
       c.database().run("INSERT OR REPLACE INTO global (key, value) "
                        "VALUES (?, ?)",
                        {key, on ? "1" : "0"});
@@ -191,17 +191,15 @@ namespace svc::core {
                                     std::string_view scope) {
       std::size_t n = 0;
       if (scope == "CHAN") {
-        auto rows =
-            c.database().query("SELECT name FROM pending_chan WHERE "
-                               "approved=0 ORDER BY requested ASC");
+        auto rows = c.database().query("SELECT name FROM pending_chan WHERE "
+                                       "approved=0 ORDER BY requested ASC");
         for (auto const &r : rows) {
           approve_chan_pending(c, m, r.as_string("name"), true);
           ++n;
         }
       } else {
-        auto rows =
-            c.database().query("SELECT name FROM pending_reg WHERE "
-                               "approved=0 ORDER BY requested ASC");
+        auto rows = c.database().query("SELECT name FROM pending_reg WHERE "
+                                       "approved=0 ORDER BY requested ASC");
         for (auto const &r : rows) {
           approve_nick_pending(c, m, r.as_string("name"), true);
           ++n;
@@ -249,8 +247,7 @@ namespace svc::core {
     }
     // Singular "item" label for an auto-approve sweep.
     std::string scope_item(std::string_view scope) {
-      return scope == "CHAN" ? std::string("channel")
-                             : std::string("nickname");
+      return scope == "CHAN" ? std::string("channel") : std::string("nickname");
     }
 
   } // namespace
@@ -339,13 +336,11 @@ namespace svc::core {
         std::string const remote = l->remote_name().empty()
                                        ? "(no remote name yet)"
                                        : l->remote_name();
-        std::string const sid = l->remote_sid().empty()
-                                    ? std::string("------")
-                                    : l->remote_sid();
+        std::string const sid =
+            l->remote_sid().empty() ? std::string("------") : l->remote_sid();
         c.notice(m, sv::fmt("  {} ({}) [{}] {} {}://{}:{} {}", remote, sid,
-                            state_name(l->state()), dir, lc.host.empty() ? "?"
-                                                                          : lc.host,
-                            port, tls,
+                            state_name(l->state()), dir,
+                            lc.host.empty() ? "?" : lc.host, port, tls,
                             l->linked() ? "" : "(not fully linked)"));
       }
     };
@@ -418,8 +413,8 @@ namespace svc::core {
     c.on_command("operserv", "REGISTER", [](ctx &c, cmsg const &m) {
       if (m.argc() < 1) {
         c.notice(m, "Usage: REGISTER APPROVE <nick> | REJECT <nick> | LIST | "
-                     "AUTOAPPROVE [on|off] | CHAN APPROVE <#chan> | CHAN "
-                     "REJECT <#chan> | CHAN LIST");
+                    "AUTOAPPROVE [on|off] | CHAN APPROVE <#chan> | CHAN "
+                    "REJECT <#chan> | CHAN LIST");
         return;
       }
       std::string const &sub = m.arg(0);
@@ -518,9 +513,8 @@ namespace svc::core {
         return;
       std::string scope = "NICK";
       std::size_t idx = 0;
-      if (m.argc() >= 1 &&
-          (sv::equals_ci(m.arg(0), "NICK") ||
-           sv::equals_ci(m.arg(0), "CHAN"))) {
+      if (m.argc() >= 1 && (sv::equals_ci(m.arg(0), "NICK") ||
+                            sv::equals_ci(m.arg(0), "CHAN"))) {
         scope = sv::equals_ci(m.arg(0), "CHAN") ? "CHAN" : "NICK";
         idx = 1;
       }
@@ -699,9 +693,8 @@ namespace svc::core {
                            "VALUES (?, ?)",
                            {name, folded});
         else if (sv::equals_ci(op, "DEL"))
-          c.database().run(
-              "DELETE FROM oper_group_users WHERE grp=? AND who=?",
-              {name, folded});
+          c.database().run("DELETE FROM oper_group_users WHERE grp=? AND who=?",
+                           {name, folded});
         else {
           c.notice(m, "Usage: GROUP USER <name> ADD|DEL <who>");
           return;

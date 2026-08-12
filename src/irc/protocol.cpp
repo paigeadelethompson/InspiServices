@@ -51,22 +51,20 @@ namespace svc::irc {
       return false;
     }
   }
-bool is_legal_sid(std::string_view s)
-{
-	// Per InspIRCd: exactly 3 chars, the first must be a digit, and the other
-	// two must be A-Z or a digit (e.g. "8E0", "00A", "123").
-	if (s.size() != 3)
-		return false;
-	if (!(s[0] >= '0' && s[0] <= '9'))
-		return false;
-	for (std::size_t i = 1; i < 3; ++i)
-	{
-		char const c = s[i];
-		if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')))
-			return false;
-	}
-	return true;
-}
+  bool is_legal_sid(std::string_view s) {
+    // Per InspIRCd: exactly 3 chars, the first must be a digit, and the other
+    // two must be A-Z or a digit (e.g. "8E0", "00A", "123").
+    if (s.size() != 3)
+      return false;
+    if (!(s[0] >= '0' && s[0] <= '9'))
+      return false;
+    for (std::size_t i = 1; i < 3; ++i) {
+      char const c = s[i];
+      if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')))
+        return false;
+    }
+    return true;
+  }
 
   bool is_legal_uid(std::string_view s) {
     if (s.size() < 6 || s.size() > 13)

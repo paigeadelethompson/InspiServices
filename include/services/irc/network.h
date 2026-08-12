@@ -25,9 +25,9 @@ namespace svc::irc {
     std::string ip;          // networking ip if known
     std::string realname;
     std::string account{}; // logged-in account or empty
-    std::string certfp{}; // client TLS cert fingerprint, if any
+    std::string certfp{};  // client TLS cert fingerprint, if any
     std::string awaymsg{};
-    std::string mode; // user modes e.g. "+iw"
+    std::string mode;       // user modes e.g. "+iw"
     std::string opertype{}; // ircd oper class name (OPERTYPE), "" if not oper
     std::int64_t nickchanged{};
     std::int64_t signon{};

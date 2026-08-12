@@ -35,8 +35,8 @@ namespace svc::core {
       std::string nick;
       std::string realname;
       std::string reply = "NOTICE";
-      std::string fop;                 // "" == '!'
-      std::string chan_nick;           // per-channel nick override
+      std::string fop;       // "" == '!'
+      std::string chan_nick; // per-channel nick override
     };
 
     struct botlive {
@@ -70,8 +70,7 @@ namespace svc::core {
     }
 
     // Client host/identity for a bot: matches the BotServ service user.
-    std::unordered_map<std::string, std::string>
-        g_bots; // botserv.name -> uid
+    std::unordered_map<std::string, std::string> g_bots; // botserv.name -> uid
 
     // Brings a bot online if it is not already; returns its uid or "".
     std::string ensure_bot(ctx &c, std::string const &name) {
@@ -83,10 +82,9 @@ namespace svc::core {
         return it->second;
 
       std::string const uid = c.allocate_uid();
-      std::string const nick = r.chan_nick.empty()
-                                   ? (r.nick.empty() ? std::string(name)
-                                                     : r.nick)
-                                   : r.chan_nick;
+      std::string const nick =
+          r.chan_nick.empty() ? (r.nick.empty() ? std::string(name) : r.nick)
+                              : r.chan_nick;
       service_info const *svc = find_service(c, "BotServ");
 
       irc::user u;
@@ -137,8 +135,8 @@ namespace svc::core {
     }
 
     // Changes the displayed nick of a live bot and propagates the NICK change.
-    void rename_live_bot(ctx &c, std::string const &name, std::string const &uid,
-                         std::string const &nick) {
+    void rename_live_bot(ctx &c, std::string const &name,
+                         std::string const &uid, std::string const &nick) {
       irc::user *u = c.net().find_user(uid);
       if (!u || sv::irc_equals(u->nick, nick))
         return;
@@ -226,8 +224,7 @@ namespace svc::core {
     // ---- fantasy (in-channel) command dispatch ------------------------------
     void fantasy(ctx &c, std::string const &botuid, irc::user const &sr,
                  std::string_view chan, std::string const &reply_mode,
-                 std::string const &cmd,
-                 std::vector<std::string> const &args) {
+                 std::string const &cmd, std::vector<std::string> const &args) {
       // Reply either via NOTICE (default) or as an ordinary channel message.
       bool const to_channel = sv::equals_ci(reply_mode, "CHANNEL");
       auto say = [&](std::string_view text) {
@@ -274,13 +271,11 @@ namespace svc::core {
           say("I last saw " + target + " " + ago_str(t) + ".");
         else
           say("I have never seen " +
-              (target.empty() ? std::string("that nick") : target) +
-              " speak.");
+              (target.empty() ? std::string("that nick") : target) + " speak.");
         return;
       }
       if (sv::equals_ci(cmd, "SAY")) {
-        bool const okay =
-            is_oper(c, sr.uid) || can_chan(c, sr, chan, 400);
+        bool const okay = is_oper(c, sr.uid) || can_chan(c, sr, chan, 400);
         if (!okay) {
           say("Only users with PROTECT access (or an operator) can make me "
               "speak.");
@@ -316,8 +311,8 @@ namespace svc::core {
           return;
         }
         if (!can_chan(c, sr, chan, 500)) {
-          say("You do not have permission to kick-ban in " +
-              std::string(chan) + ".");
+          say("You do not have permission to kick-ban in " + std::string(chan) +
+              ".");
           return;
         }
         std::string const mask =
@@ -337,8 +332,7 @@ namespace svc::core {
         if (irc::channel *chk = c.net().find_channel(chan))
           chk->members.erase(tu->uid);
       } else if (sv::equals_ci(cmd, "OP") || sv::equals_ci(cmd, "VOICE") ||
-                 sv::equals_ci(cmd, "DEOP") ||
-                 sv::equals_ci(cmd, "DEVOICE")) {
+                 sv::equals_ci(cmd, "DEOP") || sv::equals_ci(cmd, "DEVOICE")) {
         std::string target = who(0);
         if (target.empty())
           target = sr.nick;
@@ -351,8 +345,8 @@ namespace svc::core {
                        ? 300
                        : 200;
         if (!can_chan(c, sr, chan, need)) {
-          say("You do not have access to manage modes in " +
-              std::string(chan) + ".");
+          say("You do not have access to manage modes in " + std::string(chan) +
+              ".");
           return;
         }
         bool add = sv::equals_ci(cmd, "OP") || sv::equals_ci(cmd, "VOICE");
@@ -673,7 +667,8 @@ namespace svc::core {
       if (!registered && !hasbot)
         return;
 
-      std::string fop = botrows.empty() ? std::string("!") : botrows[0].as_string("fop");
+      std::string fop =
+          botrows.empty() ? std::string("!") : botrows[0].as_string("fop");
       if (fop.empty())
         fop = "!";
       if (text.empty() || text[0] != fop[0])
@@ -702,8 +697,8 @@ namespace svc::core {
 
     // Include assigned bots in every (re)burst.
     c.on_burst_extra = [&c](irc::link &l) {
-      auto rows = c.database().query(
-          "SELECT name FROM botserv WHERE assigned<>''");
+      auto rows =
+          c.database().query("SELECT name FROM botserv WHERE assigned<>''");
       for (auto const &r : rows) {
         std::string const uid = ensure_bot(c, r.as_string("name"));
         irc::user *u = uid.empty() ? nullptr : c.net().find_user(uid);

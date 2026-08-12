@@ -192,7 +192,8 @@ namespace svc {
     if (!has_fop)
       d.run("ALTER TABLE botserv ADD COLUMN fop TEXT NOT NULL DEFAULT ''");
     if (!has_chan_nick)
-      d.run("ALTER TABLE botserv ADD COLUMN chan_nick TEXT NOT NULL DEFAULT ''");
+      d.run(
+          "ALTER TABLE botserv ADD COLUMN chan_nick TEXT NOT NULL DEFAULT ''");
 
     auto nscols = d.query("PRAGMA table_info(nickserv)");
     bool has_umodes = false;

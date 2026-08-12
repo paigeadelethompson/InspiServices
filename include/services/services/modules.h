@@ -16,17 +16,16 @@ namespace svc::core {
   // ircd operator via OPERTYPE).
   inline bool is_oper(ctx &c, std::string_view uid) {
     irc::user *u = c.net().find_user(uid);
-    return u != nullptr &&
-           (u->mode.find_first_of("Oo") != std::string::npos ||
-            !u->opertype.empty());
+    return u != nullptr && (u->mode.find_first_of("Oo") != std::string::npos ||
+                            !u->opertype.empty());
   }
 
   // ---- shared channel access ----------------------------------------------
   // Founder account (folded) of a channel, "" if unregistered.
   inline std::string channel_founder(ctx &c, std::string_view chan) {
-    auto rows = c.database().query(
-        "SELECT founder FROM chanserv WHERE name=? LIMIT 1",
-        {std::string(sv::irc_lower(chan))});
+    auto rows =
+        c.database().query("SELECT founder FROM chanserv WHERE name=? LIMIT 1",
+                           {std::string(sv::irc_lower(chan))});
     return rows.empty() ? std::string() : rows[0].as_string("founder");
   }
 
@@ -45,13 +44,11 @@ namespace svc::core {
   inline bool can_chan(ctx &c, irc::user const &u, std::string_view chan,
                        int min) {
     std::string const founder = channel_founder(c, chan);
-    if (!founder.empty() && !u.account.empty() &&
-        founder == fold(u.account))
+    if (!founder.empty() && !u.account.empty() && founder == fold(u.account))
       return true;
     if (channel_access_level(c, chan, u.nick) >= min)
       return true;
-    if (!u.account.empty() &&
-        channel_access_level(c, chan, u.account) >= min)
+    if (!u.account.empty() && channel_access_level(c, chan, u.account) >= min)
       return true;
     return false;
   }

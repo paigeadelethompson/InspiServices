@@ -98,10 +98,10 @@ int main(int argc, char **argv) {
     lc.send_pass = svc::env::secret("LINK_SENDPASS").value_or("");
     lc.recv_pass = svc::env::secret("LINK_RECVPASS").value_or("");
     lc.reconnect = svc::env::get_bool("LINK_RETRY", true);
-    lc.retry_min =
-        std::chrono::milliseconds(1000LL * svc::env::get_int("LINK_RETRY_MIN", 5));
-    lc.retry_max =
-        std::chrono::milliseconds(1000LL * svc::env::get_int("LINK_RETRY_MAX", 300));
+    lc.retry_min = std::chrono::milliseconds(
+        1000LL * svc::env::get_int("LINK_RETRY_MIN", 5));
+    lc.retry_max = std::chrono::milliseconds(
+        1000LL * svc::env::get_int("LINK_RETRY_MAX", 300));
     if (lc.retry_max < lc.retry_min)
       lc.retry_max = lc.retry_min;
     if (lc.send_pass.empty())

@@ -160,16 +160,14 @@ namespace svc::core {
       std::string const svc = c.service_uid("ChanServ");
       if (svc.empty())
         return;
-      std::string const mask =
-          entry.find('@') == std::string::npos
-              ? std::string("*!*@") + u.displayhost
-              : entry;
+      std::string const mask = entry.find('@') == std::string::npos
+                                   ? std::string("*!*@") + u.displayhost
+                                   : entry;
       irc::message m;
       m.prefix = svc;
       m.command = "FMODE";
       m.params.push_back(std::string(ch.name));
-      std::int64_t const ts =
-          ch.modelock > 0 ? ch.modelock : svc::irc::now();
+      std::int64_t const ts = ch.modelock > 0 ? ch.modelock : svc::irc::now();
       m.params.push_back(std::to_string(ts));
       m.params.push_back("+b");
       m.params.push_back(mask);
@@ -180,9 +178,8 @@ namespace svc::core {
       k.command = "KICK";
       k.params.push_back(std::string(ch.name));
       k.params.push_back(u.uid);
-      k.params.push_back(reason.empty()
-                             ? std::string("Banned")
-                             : reason + " (AUTO-KICK)");
+      k.params.push_back(reason.empty() ? std::string("Banned")
+                                        : reason + " (AUTO-KICK)");
       c.deliver(k);
       ch.members.erase(u.uid);
       log::info("cs", "AKICK {} removed {} ({} {})", ch.name, u.nick, entry,
@@ -213,10 +210,10 @@ namespace svc::core {
       int need;
     };
     status_cmd const status_cmds[] = {
-        {"OP", true, 'o', 300},       {"DEOP", false, 'o', 300},
-        {"VOICE", true, 'v', 200},    {"DEVOICE", false, 'v', 200},
-        {"HOP", true, 'h', 250},      {"DEHOP", false, 'h', 250},
-        {"PROTECT", true, 'a', 400},  {"DEPROTECT", false, 'a', 400},
+        {"OP", true, 'o', 300},      {"DEOP", false, 'o', 300},
+        {"VOICE", true, 'v', 200},   {"DEVOICE", false, 'v', 200},
+        {"HOP", true, 'h', 250},     {"DEHOP", false, 'h', 250},
+        {"PROTECT", true, 'a', 400}, {"DEPROTECT", false, 'a', 400},
     };
 
     // Named channel-mode features for SET (KEEPtable mirrors the server's
@@ -319,21 +316,22 @@ namespace svc::core {
                "always OWNER. Only users with 500+ may change the list, and "
                "no one may give or take away access matching or exceeding "
                "their own.");
-    c.add_help("chanserv", "SET",
-               "Usage: SET <#channel> PASSWORD <password>\n"
-               "       SET <#channel> FOUNDER <nick>\n"
-               "       SET <#channel> <FEATURE> [value]        (PROTECT+, 400)\n"
-               "       SET <#channel> NO<FEATURE> | -<FEATURE>\n"
-               "Toggles the channel mode features the network advertises. "
-               "Feature names (channel mode): INVITEONLY(i), MODERATED(m), "
-               "NOEXTMSG(n), TOPICLOCK(t), PRIVATE(p), SECRET(s), "
-               "REGINVITE(R), REGMODERATED(M), ALLOWINVITE(A), OPERONLY(O), "
-               "SSLONLY(z), OPMODERATED(U), STRIPCOLOR(S), BLOCKCOLOR(c), "
-               "NOCTCP(C), NONOTICE(T), NONICK(N), NOKNOCK(K), NOKICK(Q), "
-               "AUDITORIUM(u), PERMANENT(P), DELAYJOIN(D), REGISTERED(r). "
-               "Value modes: KEY <key>, LIMIT <n>, FLOOD/ANTICAPS/REPEAT "
-               "<config>, JOINFLOOD/NICKFLOOD <n:t>, HISTORY <n>, DELAYMSG "
-               "<n>, KICKNOREEJOIN <n>, REDIRECT <#chan>.");
+    c.add_help(
+        "chanserv", "SET",
+        "Usage: SET <#channel> PASSWORD <password>\n"
+        "       SET <#channel> FOUNDER <nick>\n"
+        "       SET <#channel> <FEATURE> [value]        (PROTECT+, 400)\n"
+        "       SET <#channel> NO<FEATURE> | -<FEATURE>\n"
+        "Toggles the channel mode features the network advertises. "
+        "Feature names (channel mode): INVITEONLY(i), MODERATED(m), "
+        "NOEXTMSG(n), TOPICLOCK(t), PRIVATE(p), SECRET(s), "
+        "REGINVITE(R), REGMODERATED(M), ALLOWINVITE(A), OPERONLY(O), "
+        "SSLONLY(z), OPMODERATED(U), STRIPCOLOR(S), BLOCKCOLOR(c), "
+        "NOCTCP(C), NONOTICE(T), NONICK(N), NOKNOCK(K), NOKICK(Q), "
+        "AUDITORIUM(u), PERMANENT(P), DELAYJOIN(D), REGISTERED(r). "
+        "Value modes: KEY <key>, LIMIT <n>, FLOOD/ANTICAPS/REPEAT "
+        "<config>, JOINFLOOD/NICKFLOOD <n:t>, HISTORY <n>, DELAYMSG "
+        "<n>, KICKNOREEJOIN <n>, REDIRECT <#chan>.");
     c.add_help("chanserv", "STATS",
                "Usage: STATS <#channel>\n"
                "Shows channel registration and access summary.");
@@ -383,8 +381,8 @@ namespace svc::core {
 
       if (auto_approve) {
         activate_channel(c, chan, u->account);
-        c.notice(m, "Channel '" + chan + "' registered to '" + u->account +
-                        "'.");
+        c.notice(m,
+                 "Channel '" + chan + "' registered to '" + u->account + "'.");
         log::info("cs", "{} registered {} (auto)", u->account, chan);
       } else {
         // REPLACE so a previously rejected entry can be re-submitted.
@@ -426,8 +424,7 @@ namespace svc::core {
           return;
         }
         send_chan_mode(c, c.service_uid("ChanServ"), chan,
-                       std::string(1, sc.add ? '+' : '-') + sc.mode,
-                       tu->uid);
+                       std::string(1, sc.add ? '+' : '-') + sc.mode, tu->uid);
       });
     }
 
@@ -476,9 +473,8 @@ namespace svc::core {
         std::string const why =
             reason.empty() ? std::string() : fold(m.nick) + ": " + reason;
         std::int64_t const now = svc::irc::now();
-        c.database().run(
-            "DELETE FROM chanserv_akick WHERE channel=? AND who=?",
-            {std::string(sv::irc_lower(chan)), mask});
+        c.database().run("DELETE FROM chanserv_akick WHERE channel=? AND who=?",
+                         {std::string(sv::irc_lower(chan)), mask});
         c.database().run("INSERT INTO chanserv_akick (channel, who, by, ts, "
                          "reason) VALUES (?, ?, ?, ?, ?)",
                          {std::string(sv::irc_lower(chan)), mask,
@@ -506,9 +502,8 @@ namespace svc::core {
           c.notice(m, "You do not have permission to modify the AKICK list.");
           return;
         }
-        c.database().run(
-            "DELETE FROM chanserv_akick WHERE channel=? AND who=?",
-            {std::string(sv::irc_lower(chan)), m.arg(2)});
+        c.database().run("DELETE FROM chanserv_akick WHERE channel=? AND who=?",
+                         {std::string(sv::irc_lower(chan)), m.arg(2)});
         c.notice(m, "Removed " + m.arg(2) + " from the AKICK list.");
         return;
       }
@@ -542,10 +537,10 @@ namespace svc::core {
                       (r.modes.empty() ? std::string("+nt") : r.modes));
       c.notice(m, "Topic:     " +
                       (r.topic.empty() ? std::string("(none)") : r.topic));
-      c.notice(m, "Access entries: " +
-                      (acc.empty() ? "0" : acc[0].as_string("n")) +
-                      ", AKICK entries: " +
-                      (ak.empty() ? "0" : ak[0].as_string("n")));
+      c.notice(
+          m,
+          "Access entries: " + (acc.empty() ? "0" : acc[0].as_string("n")) +
+              ", AKICK entries: " + (ak.empty() ? "0" : ak[0].as_string("n")));
     });
 
     c.on_command("chanserv", "KICK", [](ctx &c, cmsg const &m) {
@@ -657,7 +652,8 @@ namespace svc::core {
         int const caller = caller_level(c, m, chan);
         if (caller < 500) {
           c.notice(m, "You do not have permission to modify the access list "
-                      "for '" + chan + "'.");
+                      "for '" +
+                          chan + "'.");
           return;
         }
         int const existing = channel_access_level(c, chan, who);
@@ -679,9 +675,8 @@ namespace svc::core {
         std::string const role = m.arg(3);
         if (!role.empty()) {
           int const rr = role_level(role);
-          lv = rr >= 0
-                   ? rr
-                   : static_cast<int>(sv::parse_or(role, std::int64_t(-1)));
+          lv = rr >= 0 ? rr
+                       : static_cast<int>(sv::parse_or(role, std::int64_t(-1)));
           if (lv < 0 || lv > 600) {
             c.notice(m, "Invalid level/role '" + role +
                             "'. Use a number 1-600 or a role name (VOICE, "
@@ -706,9 +701,9 @@ namespace svc::core {
                                        {std::string(sv::irc_lower(chan))});
         std::string const founder = channel_founder(c, chan);
         c.notice(m, "Access list for " + chan +
-                        (founder.empty() ? std::string()
-                                         : std::string(" (founder ") +
-                                               founder + ")"));
+                        (founder.empty()
+                             ? std::string()
+                             : std::string(" (founder ") + founder + ")"));
         if (rows.empty())
           c.notice(m, "  (no access entries)");
         for (auto &row : rows) {
@@ -733,11 +728,10 @@ namespace svc::core {
       bool const props =
           sv::equals_ci(opt, "PASSWORD") || sv::equals_ci(opt, "FOUNDER");
       if (!has_access(c, m, chan, props ? 600 : 400)) {
-        c.notice(m, props
-                        ? "Only the founder can change settings for '" + chan +
-                              "'."
-                        : "You do not have permission to set modes on '" +
-                              chan + "'.");
+        c.notice(m, props ? "Only the founder can change settings for '" +
+                                chan + "'."
+                          : "You do not have permission to set modes on '" +
+                                chan + "'.");
         return;
       }
 
@@ -771,8 +765,9 @@ namespace svc::core {
       }
       feature const *f = feature_lookup(base);
       if (!f) {
-        c.notice(m, "Unknown SET option for " + chan + ". Use HELP SET for a "
-                    "list.");
+        c.notice(m, "Unknown SET option for " + chan +
+                        ". Use HELP SET for a "
+                        "list.");
         return;
       }
       std::string const modes = std::string(off ? "-" : "+") + f->mode;

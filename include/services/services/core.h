@@ -104,8 +104,8 @@ namespace svc::core {
     void help_command(cmsg const &m);
 
     // Generic "help" text bank: service -> SUBJECT -> text.
-    using help_bank = std::map<std::string, std::map<std::string, std::string>,
-                               std::less<>>;
+    using help_bank =
+        std::map<std::string, std::map<std::string, std::string>, std::less<>>;
 
     // ---- sending ----
     void send_notice(service_info const &sv, std::string_view target,

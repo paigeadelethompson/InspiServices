@@ -104,12 +104,14 @@ namespace svc::core {
     if (svc == help_.end())
       return;
     auto const &h = svc->second;
-    auto emit = [&](std::string_view line) { send_notice(*m.service, m.reply, line); };
+    auto emit = [&](std::string_view line) {
+      send_notice(*m.service, m.reply, line);
+    };
 
     std::string const sub = m.arg(0);
     if (sub.empty()) {
       emit(std::string(m.service->name) + " commands (use HELP <command> for "
-           "syntax):");
+                                          "syntax):");
       for (auto const &[subject, text] : h) {
         std::string const usage = text.substr(0, text.find('\n'));
         emit(std::string("  ") + subject + " -- " + usage);
@@ -128,8 +130,7 @@ namespace svc::core {
              " HELP <command> for syntax):");
         if (other != help_.end()) {
           for (auto const &[subject, text] : other->second) {
-            std::string const usage =
-                text.substr(0, text.find('\n'));
+            std::string const usage = text.substr(0, text.find('\n'));
             emit(std::string("  ") + subject + " -- " + usage);
           }
         }
@@ -156,8 +157,9 @@ namespace svc::core {
   void ctx::add_channel_state(std::function<void(irc::channel &)> fn) {
     channel_states_.push_back(std::move(fn));
   }
-  void ctx::add_fantasy(std::function<void(irc::user const &, std::string_view,
-                                           std::string_view)> fn) {
+  void ctx::add_fantasy(
+      std::function<void(irc::user const &, std::string_view, std::string_view)>
+          fn) {
     fantasies_.push_back(std::move(fn));
   }
 
@@ -272,9 +274,10 @@ namespace svc::core {
     install_bridgeserv(*this);
 
     // Every service answers to the generic HELP command backed by add_help().
-    for (auto *svc : {"nickserv", "chanserv", "botserv", "operserv",
-                      "bridgeserv"}) {
-      on_command(svc, "HELP", [this](ctx &, cmsg const &m) { help_command(m); });
+    for (auto *svc :
+         {"nickserv", "chanserv", "botserv", "operserv", "bridgeserv"}) {
+      on_command(svc, "HELP",
+                 [this](ctx &, cmsg const &m) { help_command(m); });
     }
   }
 

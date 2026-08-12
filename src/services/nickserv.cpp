@@ -148,13 +148,11 @@ namespace svc::core {
     }
 
     // Account (folded) bound to a client certificate fingerprint, if any.
-    bool cert_account(ctx &c, std::string_view certfp,
-                      std::string &account) {
-      auto rows = c.database().query(
-          "SELECT n.account FROM nickserv_cert nc "
-          "JOIN nickserv n ON n.name = nc.name "
-          "WHERE nc.certfp = ? LIMIT 1",
-          {std::string(certfp)});
+    bool cert_account(ctx &c, std::string_view certfp, std::string &account) {
+      auto rows = c.database().query("SELECT n.account FROM nickserv_cert nc "
+                                     "JOIN nickserv n ON n.name = nc.name "
+                                     "WHERE nc.certfp = ? LIMIT 1",
+                                     {std::string(certfp)});
       if (rows.empty())
         return false;
       account = rows[0].as_string("account");
@@ -175,7 +173,8 @@ namespace svc::core {
                "Logs into a registered nickname. Without a nickname your "
                "current nick is used. You can also authenticate automatically "
                "by binding a client certificate with CERT.");
-    c.add_help("nickserv", "LOGOUT", "Usage: LOGOUT\n"
+    c.add_help("nickserv", "LOGOUT",
+               "Usage: LOGOUT\n"
                "Ends your current login session.");
     c.add_help("nickserv", "STATUS",
                "Usage: STATUS [nickname]\n"
@@ -440,11 +439,9 @@ namespace svc::core {
       if (irc::user *t = c.net().by_nick(nick))
         identified = !t->account.empty() && t->account == a.account;
       c.notice(m, "Nickname '" + nick + "' is registered" +
-                      (identified ? " and is currently identified."
-                                  : "."));
+                      (identified ? " and is currently identified." : "."));
       if (identified)
-        c.notice(m, "Account: " +
-                        (a.account.empty() ? nick : a.account));
+        c.notice(m, "Account: " + (a.account.empty() ? nick : a.account));
     });
 
     c.on_command("nickserv", "GHOST", [](ctx &c, cmsg const &m) {
